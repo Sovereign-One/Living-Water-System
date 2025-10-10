@@ -1,0 +1,90 @@
+Open-Source Licensing Notice for The Living Water System
+
+
+
+
+
+
+Licenses Applied
+
+
+
+Hardware elements: CERN Open Hardware Licence Version 2 – Permissive (CERN-OHL-P-2.0)
+Text, diagrams, and educational content: Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+
+
+
+Both licenses allow anyone to study, use, modify, and share the material freely, provided that copies include this notice and the same licenses remain attached.
+
+
+
+
+
+
+Summary of Rights
+
+You may:
+
+
+
+Use the design and documentation for any purpose.
+Modify and build upon it.
+Distribute your own versions, with or without modification, provided you preserve these license notices.
+
+
+
+
+You must:
+
+
+
+Attribute the original source when reasonable.
+State any modifications you make.
+Include the same license text with redistributed or derivative work.
+
+
+
+
+
+
+
+Disclaimer of Warranty and Liability
+
+This work is provided “as-is.”  No warranty of any kind is expressed or implied, including but not limited to the implied warranties of merchantability or fitness for a particular purpose.
+
+The author and any contributors assume no liability for damages, losses, or injuries arising from use or performance of this work.
+
+
+
+
+
+
+Independence Statement
+
+This project was conceived and prepared by the author independently and outside any employment duties or contracts.  The author’s employer and affiliates have no involvement, endorsement, or responsibility for this work.
+
+
+
+
+
+
+Creator’s Mark (SHA-256)
+
+f3004c6a645db1e05d9f2366e0565fa1e869be556eb3b5e407496799fdca18e5
+
+
+
+
+
+
+Notice
+
+Possession of this text conveys open permission, not ownership.  The Living Water System remains part of the public domain of ideas, available to everyone, without restriction or warranty.
+
+
+
+
+
+
+End of LICENSE.txt
