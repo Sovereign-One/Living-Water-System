@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helical Water Elevator — Living Water System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #05080b;
+    color: #c8bfaa;
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 10px 32px;
+  }
+  header { text-align: center; margin-bottom: 14px; }
+  .eyebrow {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; letter-spacing: 4px; color: #e8a030;
+    text-transform: uppercase; margin-bottom: 5px;
+  }
+  h1 { font-size: 21px; font-weight: 600; color: #d4cbb8; letter-spacing: 0.5px; }
+  h2 { font-size: 13px; font-weight: 300; color: #6a8898; letter-spacing: 2px; margin-top: 3px; }
+
+.controls {
+display: flex; gap: 10px; margin-bottom: 14px;
+align-items: center; flex-wrap: wrap; justify-content: center;
+}
+button {
+font-family: ‘Share Tech Mono’, monospace; font-size: 10px;
+letter-spacing: 2px; padding: 7px 16px; background: transparent;
+border: 1px solid #e8a030; color: #e8a030; cursor: pointer;
+border-radius: 2px; text-transform: uppercase;
+transition: background 0.15s, color 0.15s;
+}
+button:hover, button.active { background: #e8a030; color: #000; }
+.speed-label { font-family: ‘Share Tech Mono’, monospace; font-size: 9px; color: #5a7888; letter-spacing: 2px; }
+input[type=range] { accent-color: #e8a030; width: 80px; }
+.wave-status {
+font-family: ‘Share Tech Mono’, monospace; font-size: 10px;
+padding: 5px 14px; border: 1px solid #1a3a1a;
+color: #30aa50; letter-spacing: 1px; border-radius: 2px;
+min-width: 200px; text-align: center;
+}
+
+canvas {
+display: block; border: 1px solid #111820;
+border-radius: 4px; max-width: 100%;
+}
+
+.note {
+max-width: 460px; text-align: center; font-size: 12px;
+color: #5a7888; line-height: 1.8; margin-top: 14px;
+border-top: 1px solid #111820; padding-top: 12px;
+}
+.note strong { color: #c8bfaa; }
+
+.credit {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 8px; color: #2a3a44; letter-spacing: 2px;
+margin-top: 10px; text-align: center;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Living Water System · Stage 1</div>
+  <h1>Helical Water Elevator</h1>
+  <h2>Daisy Chain — Unrolled Profile</h2>
+</header>
+
+<div class="controls">
+  <button id="btnPlay" class="active" onclick="togglePlay()">⏸ PAUSE</button>
+  <button onclick="resetAll()">↺ RESET</button>
+  <span class="speed-label">SPEED</span>
+  <input type="range" min="0.3" max="3" step="0.1" value="1" oninput="speed=parseFloat(this.value)">
+  <div class="wave-status" id="waveStatus">—</div>
+</div>
+
+<canvas id="c"></canvas>
+
+<div class="note">
+  <strong>The hole glows.</strong> Each cup connects to the central tower through a small hole at the top. The tower is not drawn — only its effect is visible. Wave suction pulls through the hole, opens the flap valve, water rises one cup. One ratchet per wave cycle. Water only goes up.
+</div>
+
+<div class="credit">MALAK BAHRAM BAHRAMI · OPEN SOURCE · 2026</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+
+const W = Math.min(window.innerWidth - 20, 500);
+const H = Math.round(W * 1.32);
+canvas.width  = W;
+canvas.height = H;
+
+// ── Layout ─────────────────────────────────────────────────────
+const N = 5; // cups
+
+// Cup anchor = where the pipe passes through the cup
+// Distributed along diagonal from bottom-left to top-right
+function anchor(i) {
+  const t = 0.09 + (i / (N - 1)) * 0.78;
+  return {
+    x: W * (0.11 + t * 0.75),
+    y: H * (0.87 - t * 0.73)
+  };
+}
+
+const PW     = 14;    // pipe width
+const CUP_W  = 52;    // cup width
+const CUP_H  = 72;    // cup total height
+const AIR_F  = 1/3;   // top 1/3 = air space (where hole lives)
+// pipe enters at 1/3 from top = bottom of air space
+
+const OCEAN_Y = H * 0.77;
+
+// Reservoir
+const RX = W * 0.73, RY = H * 0.035;
+const RW = W * 0.23, RH = H * 0.115;
+
+// ── State ──────────────────────────────────────────────────────
+const cupWater = new Array(N).fill(0);   // 0..1 water fill in lower chamber
+const segFill  = new Array(N).fill(0);   // pipe segment fill (i → i+1, last → reservoir)
+const flapAmt  = new Array(N).fill(0);   // flap open amount 0..1
+const holeGlow = new Array(N).fill(0);   // hole glow intensity 0..1
+let   resFill  = 0;
+
+function initWater() {
+  for (let i = 0; i < N; i++) {
+    const a = anchor(i);
+    cupWater[i] = a.y > OCEAN_Y ? 1.0 : 0;
+  }
+}
+initWater();
+
+let wavePhase = 0;
+let suction   = 0;   // 0..1 suction magnitude
+let waveOff   = 0;
+let playing   = true;
+let speed     = 1.0;
+let lastTime  = null;
+const PERIOD  = 3.4;
+
+// ── Controls ───────────────────────────────────────────────────
+function togglePlay() {
+  playing = !playing;
+  const b = document.getElementById('btnPlay');
+  b.textContent = playing ? '⏸ PAUSE' : '▶ PLAY';
+  b.classList.toggle('active', playing);
+  if (playing) requestAnimationFrame(loop);
+}
+function resetAll() {
+  cupWater.fill(0); segFill.fill(0); flapAmt.fill(0); holeGlow.fill(0);
+  resFill = 0; wavePhase = 0; suction = 0;
+  initWater();
+}
+
+// ── Simulation ─────────────────────────────────────────────────
+function simulate(dt) {
+  wavePhase += dt / PERIOD * speed;
+  if (wavePhase > 1) wavePhase -= 1;
+
+  const ph  = wavePhase * Math.PI * 2;
+  waveOff   = Math.sin(ph) * 14;
+
+  // suction = wave going down
+  const raw       = -Math.sin(ph);
+  const isSuction = raw > 0;
+  const sTarget   = isSuction ? raw : 0;
+  suction += (sTarget - suction) * dt * 5;
+
+  // status bar
+  const el = document.getElementById('waveStatus');
+  if (isSuction) {
+    el.textContent   = `WAVE ↓  SUCTION  −P = ${suction.toFixed(2)}`;
+    el.style.color   = '#30aa50';
+    el.style.borderColor = '#1a4a1a';
+  } else {
+    el.textContent   = `WAVE ↑  VALVES HOLD`;
+    el.style.color   = '#906030';
+    el.style.borderColor = '#3a2a0a';
+  }
+
+  // Submerged cups fill from ocean
+  for (let i = 0; i < N; i++) {
+    const a = anchor(i);
+    if (a.y > OCEAN_Y + waveOff - 8) cupWater[i] = 1.0;
+  }
+
+  // Hole glow — all holes respond to suction
+  for (let i = 0; i < N; i++) {
+    const target = isSuction ? suction : 0;
+    holeGlow[i] += (target - holeGlow[i]) * dt * 6;
+  }
+
+  // Chain transfer
+  for (let i = 0; i < N - 1; i++) {
+    if (isSuction && suction > 0.08 && cupWater[i] > 0.04) {
+      flapAmt[i] += (Math.min(1, suction * 2.2) - flapAmt[i]) * dt * 8;
+      const xfer  = Math.min(flapAmt[i] * suction * 0.52 * speed * dt, cupWater[i] * 0.28);
+      segFill[i]  = Math.min(1, segFill[i] + xfer * 3.4);
+      cupWater[i] = Math.max(0, cupWater[i] - xfer * 0.58);
+      if (segFill[i] > 0.88) cupWater[i+1] = Math.min(1, cupWater[i+1] + xfer * 0.94);
+    } else {
+      flapAmt[i] += (0 - flapAmt[i]) * dt * 10;
+      segFill[i]  = Math.max(0, segFill[i] - dt * 0.55);
+    }
+  }
+
+  // Last cup → reservoir
+  const L = N - 1;
+  if (isSuction && suction > 0.08 && cupWater[L] > 0.04) {
+    flapAmt[L] += (Math.min(1, suction * 2.2) - flapAmt[L]) * dt * 8;
+    const xfer  = Math.min(flapAmt[L] * suction * 0.40 * speed * dt, cupWater[L] * 0.28);
+    segFill[L]  = Math.min(1, segFill[L] + xfer * 3.4);
+    cupWater[L] = Math.max(0, cupWater[L] - xfer * 0.50);
+    if (segFill[L] > 0.88) resFill = Math.min(1, resFill + xfer * 0.85);
+  } else {
+    flapAmt[L] += (0 - flapAmt[L]) * dt * 10;
+    segFill[L]  = Math.max(0, segFill[L] - dt * 0.55);
+  }
+}
+
+// ── Draw ───────────────────────────────────────────────────────
+
+function drawBg() {
+  // subtle grid
+  ctx.strokeStyle = '#080d12'; ctx.lineWidth = 0.5;
+  for (let x = 0; x < W; x += 24) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 24) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+}
+
+function drawOcean() {
+  const sy = OCEAN_Y + waveOff;
+
+  // deep fill
+  const g = ctx.createLinearGradient(0, sy, 0, H);
+  g.addColorStop(0, '#081828'); g.addColorStop(1, '#010305');
+  ctx.fillStyle = g; ctx.fillRect(0, sy, W, H - sy);
+
+  // wave surface fill
+  ctx.beginPath(); ctx.moveTo(0, sy);
+  for (let x = 0; x <= W; x += 3) {
+    ctx.lineTo(x, sy
+      + Math.sin(x * 0.038 + wavePhase * Math.PI * 4) * 4.5
+      + Math.sin(x * 0.019 + wavePhase * Math.PI * 2) * 3);
+  }
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+  ctx.fillStyle = 'rgba(5,15,28,0.55)'; ctx.fill();
+
+  // wave line
+  ctx.beginPath(); ctx.moveTo(0, sy);
+  for (let x = 0; x <= W; x += 3) {
+    ctx.lineTo(x, sy
+      + Math.sin(x * 0.038 + wavePhase * Math.PI * 4) * 4.5
+      + Math.sin(x * 0.019 + wavePhase * Math.PI * 2) * 3);
+  }
+  ctx.strokeStyle = '#2080a8'; ctx.lineWidth = 1.8; ctx.stroke();
+
+  // label
+  ctx.font = '8px Share Tech Mono'; ctx.fillStyle = '#2080a8';
+  ctx.textAlign = 'left'; ctx.fillText('OCEAN', 8, sy - 6);
+}
+
+function drawSegment(i) {
+  const a1 = anchor(i);
+  const isLast = (i === N - 1);
+  const a2 = isLast
+    ? { x: RX + RW * 0.48, y: RY + 2 }
+    : anchor(i + 1);
+
+  const fill = segFill[i];
+
+  // pipe shadow
+  ctx.strokeStyle = '#040810'; ctx.lineWidth = PW + 6; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(a2.x, a2.y); ctx.stroke();
+
+  // pipe wall
+  ctx.strokeStyle = '#182535'; ctx.lineWidth = PW;
+  ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(a2.x, a2.y); ctx.stroke();
+
+  // pipe inner (slightly lighter)
+  ctx.strokeStyle = '#1e3040'; ctx.lineWidth = PW - 5;
+  ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(a2.x, a2.y); ctx.stroke();
+
+  // water in segment
+  if (fill > 0.02) {
+    const ex = a1.x + (a2.x - a1.x) * fill;
+    const ey = a1.y + (a2.y - a1.y) * fill;
+
+    ctx.strokeStyle = '#1878b0'; ctx.lineWidth = PW - 5;
+    ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(ex, ey); ctx.stroke();
+
+    // bright leading edge
+    if (fill < 0.96) {
+      const bk = 0.06;
+      ctx.strokeStyle = '#68d8ff'; ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(a1.x + (a2.x - a1.x) * Math.max(0, fill - bk),
+                 a1.y + (a2.y - a1.y) * Math.max(0, fill - bk));
+      ctx.lineTo(ex, ey); ctx.stroke();
+    }
+
+    // drip into reservoir
+    if (isLast && fill > 0.9) {
+      const dp = (fill - 0.9) / 0.1;
+      ctx.fillStyle = `rgba(60,190,255,${dp * 0.85})`;
+      ctx.beginPath();
+      ctx.arc(a2.x, a2.y + 7 + dp * 11, 2.5 + dp * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  ctx.lineCap = 'butt';
+
+  // flap valve
+  drawFlap(a1, a2, flapAmt[i]);
+}
+
+function drawFlap(a1, a2, open) {
+  // Positioned 45% along segment — clearly between cups
+  const t  = 0.45;
+  const fx = a1.x + (a2.x - a1.x) * t;
+  const fy = a1.y + (a2.y - a1.y) * t;
+  const ang = Math.atan2(a2.y - a1.y, a2.x - a1.x);
+  const oa  = open * 0.78;
+
+  ctx.save();
+  ctx.translate(fx, fy); ctx.rotate(ang);
+
+  // hinge pin
+  ctx.fillStyle = '#909090';
+  ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2); ctx.fill();
+
+  // flap arm
+  const col = open > 0.08 ? '#e86020' : '#882808';
+  ctx.strokeStyle = col; ctx.lineWidth = 4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(0, 0);
+  ctx.lineTo(Math.sin(oa) * 13, -Math.cos(oa) * 13);
+  ctx.stroke();
+
+  // tip dot
+  ctx.fillStyle = col;
+  ctx.beginPath();
+  ctx.arc(Math.sin(oa) * 13, -Math.cos(oa) * 13, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawCup(i) {
+  const a   = anchor(i);
+  const wl  = cupWater[i];
+  const gl  = holeGlow[i];
+  const sub = a.y > OCEAN_Y + waveOff - 6;
+
+  // Cup geometry — anchor = pipe entry point
+  // Air space: AIR_F of CUP_H ABOVE anchor  (top 1/3)
+  // Water chamber: (1-AIR_F) of CUP_H BELOW anchor (bottom 2/3)
+  const airH   = CUP_H * AIR_F;
+  const chamH  = CUP_H * (1 - AIR_F);
+  const cupTop = a.y - airH;
+  const cupBot = a.y + chamH;
+  const cx     = a.x - CUP_W / 2;
+
+  // ── shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  ctx.fillRect(cx + 4, cupTop + 4, CUP_W, CUP_H);
+
+  // ── air space background
+  ctx.fillStyle = sub ? '#0a0f08' : '#0d1208';
+  ctx.fillRect(cx, cupTop, CUP_W, airH);
+
+  // ── water chamber background
+  ctx.fillStyle = sub ? '#090e08' : '#0b1008';
+  ctx.fillRect(cx, a.y, CUP_W, chamH);
+
+  // ── water fill
+  if (wl > 0.01) {
+    const wh = chamH * wl;
+    const wy = cupBot - wh;
+    const g  = ctx.createLinearGradient(cx, wy, cx, cupBot);
+    g.addColorStop(0, '#52c0fa');
+    g.addColorStop(0.35, '#1880b8');
+    g.addColorStop(1, '#071828');
+    ctx.fillStyle = g;
+    ctx.fillRect(cx + 2, wy, CUP_W - 4, wh);
+
+    // water surface shimmer
+    ctx.strokeStyle = `rgba(90,210,255,${0.18 + Math.sin(wavePhase * 7 + i * 1.3) * 0.08})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(cx + 2, wy); ctx.lineTo(cx + CUP_W - 2, wy); ctx.stroke();
+  }
+
+  // ── pipe entry divider line (subtle)
+  ctx.strokeStyle = 'rgba(50,80,40,0.32)';
+  ctx.lineWidth = 1; ctx.setLineDash([4, 5]);
+  ctx.beginPath(); ctx.moveTo(cx + 4, a.y); ctx.lineTo(cx + CUP_W - 4, a.y); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── THREE walls — left, top, right. Open bottom (pipe passes through).
+  const wallCol = wl > 0.72 ? '#d05015' : '#902808';
+  ctx.strokeStyle = wallCol; ctx.lineWidth = 2.8;
+  ctx.beginPath();
+  ctx.moveTo(cx,          cupBot);
+  ctx.lineTo(cx,          cupTop);
+  ctx.lineTo(cx + CUP_W,  cupTop);
+  ctx.lineTo(cx + CUP_W,  cupBot);
+  ctx.stroke();
+
+  // ── pipe notch gaps at bottom (pipe passes through)
+  ctx.fillStyle = '#1e3040';
+  ctx.fillRect(cx - 1,          cupBot - 7, 9,  10);
+  ctx.fillRect(cx + CUP_W - 8,  cupBot - 7, 10, 10);
+
+  // ── THE HOLE — top of air space, centered
+  // This is the connection to the central tower. No pipe drawn. Just the hole.
+  const hx = cx + CUP_W / 2;
+  const hy = cupTop + airH * 0.40;
+  const holeR = 6;
+
+  // outer glow ring when suction active
+  if (gl > 0.05) {
+    const glowR = holeR + 4 + gl * 10;
+    const grd = ctx.createRadialGradient(hx, hy, holeR, hx, hy, glowR);
+    grd.addColorStop(0, `rgba(40,200,80,${gl * 0.55})`);
+    grd.addColorStop(1, `rgba(20,100,40,0)`);
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.arc(hx, hy, glowR, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // hole ring
+  ctx.strokeStyle = gl > 0.08
+    ? `rgba(40,${160 + gl * 90},60,${0.6 + gl * 0.4})`
+    : 'rgba(60,90,50,0.5)';
+  ctx.lineWidth = 2.2;
+  ctx.beginPath(); ctx.arc(hx, hy, holeR, 0, Math.PI * 2); ctx.stroke();
+
+  // hole fill (dark inside)
+  ctx.fillStyle = gl > 0.08
+    ? `rgba(10,${40 + gl * 30},15,1)`
+    : '#080c08';
+  ctx.beginPath(); ctx.arc(hx, hy, holeR - 1, 0, Math.PI * 2); ctx.fill();
+
+  // inner bright dot when active
+  if (gl > 0.2) {
+    ctx.fillStyle = `rgba(60,${200 + gl * 55},80,${gl * 0.85})`;
+    ctx.beginPath(); ctx.arc(hx, hy, 2.5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // ── cup label
+  ctx.font = '8px Share Tech Mono'; ctx.fillStyle = '#6a8898';
+  ctx.textAlign = 'center'; ctx.fillText(`C${i + 1}`, hx, cupTop - 6);
+
+  // water %
+  if (wl > 0.06) {
+    ctx.fillStyle = '#3ab0f0'; ctx.font = '7px Share Tech Mono';
+    ctx.fillText(`${Math.round(wl * 100)}%`, hx, cupBot - 5);
+  }
+
+  // submerged tag
+  if (sub) {
+    ctx.fillStyle = 'rgba(30,100,190,0.5)'; ctx.font = '6px Share Tech Mono';
+    ctx.fillText('SUB', hx, cupBot + 11);
+  }
+}
+
+function drawIntake() {
+  const a  = anchor(0);
+  // direction: back along the spine
+  const a1 = anchor(0), a2 = anchor(1);
+  const dx = a1.x - a2.x, dy = a1.y - a2.y;
+  const len = Math.sqrt(dx*dx+dy*dy);
+  const ux = dx/len, uy = dy/len;
+
+  ctx.strokeStyle = '#101e28'; ctx.lineWidth = PW; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(a.x, a.y);
+  ctx.lineTo(a.x + ux * 30, a.y + uy * 30); ctx.stroke();
+
+  // flared intake
+  const ex = a.x + ux * 36, ey = a.y + uy * 36;
+  const nx = -uy, ny = ux;
+  ctx.strokeStyle = '#1a3a50'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(ex - nx * 13, ey - ny * 13);
+  ctx.lineTo(ex, ey);
+  ctx.lineTo(ex + nx * 13, ey + ny * 13);
+  ctx.stroke(); ctx.lineCap = 'butt';
+
+  ctx.font = '7px Share Tech Mono'; ctx.fillStyle = '#2a6880';
+  ctx.textAlign = 'center';
+  ctx.fillText('INTAKE', ex + nx * 0, ey + 20);
+}
+
+function drawReservoir() {
+  const x = RX, y = RY, w = RW, h = RH;
+
+  // background
+  ctx.fillStyle = '#04101e'; ctx.fillRect(x, y, w, h);
+
+  // water
+  if (resFill > 0.02) {
+    const wh = (h - 4) * resFill;
+    const wy = y + h - 2 - wh;
+    const g  = ctx.createLinearGradient(x, wy, x, y + h);
+    g.addColorStop(0, '#52c0fa');
+    g.addColorStop(0.5, '#1870a8');
+    g.addColorStop(1, '#051525');
+    ctx.fillStyle = g; ctx.fillRect(x + 2, wy, w - 4, wh);
+    ctx.strokeStyle = `rgba(70,195,250,${0.18 + Math.sin(wavePhase * 4) * 0.07})`;
+    ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x+2,wy); ctx.lineTo(x+w-2,wy); ctx.stroke();
+  }
+
+  // 3 walls open top
+  ctx.strokeStyle = '#2080a8'; ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(x, y); ctx.lineTo(x, y + h);
+  ctx.lineTo(x + w, y + h); ctx.lineTo(x + w, y);
+  ctx.stroke();
+
+  ctx.font = '8px Share Tech Mono'; ctx.fillStyle = '#2080a8'; ctx.textAlign = 'center';
+  ctx.fillText('ELEVATED', x + w/2, y + 15);
+  ctx.fillText('STORAGE',  x + w/2, y + 27);
+  ctx.font = '6px Share Tech Mono'; ctx.fillStyle = '#3a6878';
+  ctx.fillText('OPEN TOP', x + w/2, y - 5);
+
+  if (resFill > 0.05) {
+    ctx.fillStyle = '#58d0ff'; ctx.font = '7px Share Tech Mono';
+    ctx.fillText(`${Math.round(resFill * 100)}%`, x + w/2, y + h - 5);
+  }
+}
+
+function drawWaveMeter() {
+  const wx = 10, wy = H * 0.36;
+  ctx.strokeStyle = '#111820'; ctx.lineWidth = 1; ctx.strokeRect(wx, wy, 34, 68);
+  ctx.font = '7px Share Tech Mono'; ctx.fillStyle = '#5a7888'; ctx.textAlign = 'center';
+  ctx.fillText('WAVE', wx + 17, wy - 3);
+
+  const ph = wavePhase * Math.PI * 2;
+  ctx.beginPath();
+  for (let t = 0; t <= Math.PI * 2; t += 0.15) {
+    const px = wx + (t / (Math.PI * 2)) * 34;
+    const py = wy + 34 + Math.sin(t) * 23;
+    t === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+  }
+  ctx.strokeStyle = '#2080a8'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  // dot
+  const dotX = wx + (wavePhase % 1) * 34;
+  const dotY = wy + 34 + Math.sin(ph) * 23;
+  ctx.fillStyle = '#58d0ff';
+  ctx.beginPath(); ctx.arc(dotX, dotY, 3, 0, Math.PI * 2); ctx.fill();
+
+  // direction
+  const isSuction = -Math.sin(ph) > 0;
+  ctx.fillStyle = isSuction ? '#30aa50' : '#906030';
+  ctx.font = '14px Share Tech Mono'; ctx.textAlign = 'center';
+  ctx.fillText(isSuction ? '↓' : '↑', wx + 17, wy + 86);
+  ctx.font = '7px Share Tech Mono';
+  ctx.fillText(isSuction ? 'SUCTION' : 'PUSH', wx + 17, wy + 97);
+}
+
+// ── Main loop ──────────────────────────────────────────────────
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  drawBg();
+  drawOcean();
+
+  // Segments behind cups
+  for (let i = 0; i < N; i++) drawSegment(i);
+  // Cups on top
+  for (let i = 0; i < N; i++) drawCup(i);
+
+  drawIntake();
+  drawReservoir();
+  drawWaveMeter();
+}
+
+function loop(ts) {
+  if (!playing) return;
+  if (!lastTime) lastTime = ts;
+  const dt = Math.min((ts - lastTime) / 1000, 0.05);
+  lastTime = ts;
+  simulate(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+draw();
+requestAnimationFrame(loop);
+</script>
+
+</body>
+</html>
