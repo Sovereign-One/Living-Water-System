@@ -59,11 +59,16 @@ It belongs to everyone and may be freely reinterpreted within the bounds of open
 ⸻
 
 Files
-	1.	The Living Water System – Technical White Paper.docx
- Outlines the physics and component relationships in ratio form.
-	2.	The Living Water System – Engineer’s Journal.docx
- Narrative development notes, reasoning, and material philosophy.
-	3.	LICENSE.txt
+	1.	README.md
+ Overview of the Living Water System concept, architecture, intent, and licensing.
+
+	2.	docs/animations/helical_elevator.html
+ Conceptual animation of the Stage 1 helical water elevator.
+
+	3.	docs/images/
+ Concept diagrams and development images for the system.
+
+	4.	LICENSE.txt
  CERN-OHL-P-2.0 (for hardware) and CC-BY-4.0 (for documentation).
 
 ⸻
