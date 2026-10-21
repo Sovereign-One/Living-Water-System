@@ -199,6 +199,9 @@ The objective is to protect the investigation rather than protect any individual
 
 The front-door description of the Living Water System, its architecture, development philosophy, and licensing.
 
+### `docs/architecture/distributed_water_infrastructure.md`
+
+Place-agnostic description of the Living Water System dual-utility architecture, including the Tier-2 water backbone, distributed treatment, compressed-air utility, Desert Whale pumping, Gastropod Pipe, resilience water, and hybrid operation with conventional infrastructure.
 ### `docs/images/`
 
 Concept sketches and development diagrams.
