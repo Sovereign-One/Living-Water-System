@@ -202,6 +202,7 @@ The front-door description of the Living Water System, its architecture, develop
 ### `docs/architecture/distributed_water_infrastructure.md`
 
 Place-agnostic description of the Living Water System dual-utility architecture, including the Tier-2 water backbone, distributed treatment, compressed-air utility, Desert Whale pumping, Gastropod Pipe, resilience water, and hybrid operation with conventional infrastructure.
+
 ### `docs/images/`
 
 Concept sketches and development diagrams.
