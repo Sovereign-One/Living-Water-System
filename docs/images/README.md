@@ -16,11 +16,9 @@ This concept preceded and informed the later helical water-elevator configuratio
 
 ## 02 — Trompe Protocol
 
-**File:** `02_stage2_trompe_protocol.jpeg`
+The Trompe Protocol remains part of the Living Water System architecture and is documented in the root README and architecture documents.
 
-Concept for using elevated water from the water elevator to entrain and compress air through a trompe-type hydraulic air-compression process.
-
-The compressed air is intended as a reusable energy medium for downstream pumping and other pneumatic applications.
+The original historical sketch is not included in the current place-agnostic image set.
 
 ## 03 — Desert Whale Pump Station
 
