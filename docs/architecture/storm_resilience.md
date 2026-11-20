@@ -3,7 +3,7 @@
 ## Hydraulic Air Compression + Pneumatic Floodwater Management
 
 **Status:** Conceptual engineering architecture only  
-**Origin:** Generalized from the Tokyo Flood Resilience HBA-01 Concept Package v0.2, 18 October 2026  
+**Origin:** Generalized from prior site-specific HBA-01 conceptual screening work, 18 October 2026  
 **Not for construction**
 
 ## Purpose
@@ -444,9 +444,9 @@ Each mechanism should survive or fail on its own engineering merit.
 
 ## Origin and Generalization
 
-This architecture was generalized from the **Tokyo Flood Resilience HBA-01 Concept Package v0.2**, prepared by Malak Bahrami, PE, dated 18 October 2026.
+This architecture was generalized from an earlier **site-specific HBA-01 conceptual screening package**, prepared by Malak Bahrami, PE, dated 18 October 2026.
 
-The Tokyo package evaluated a specific conceptual alignment and event screening. Those site-specific dimensions, flows, heads, capacities, event calculations, and facility references are intentionally not carried into this generalized architecture.
+The earlier package evaluated a specific conceptual alignment and event screening. Those site-specific dimensions, flows, heads, capacities, event calculations, and facility references are intentionally not carried into this generalized architecture.
 
 The general mechanisms preserved here are:
 
