@@ -203,6 +203,14 @@ The front-door description of the Living Water System, its architecture, develop
 
 Place-agnostic description of the Living Water System dual-utility architecture, including the Tier-2 water backbone, distributed treatment, compressed-air utility, Desert Whale pumping, Gastropod Pipe, resilience water, and hybrid operation with conventional infrastructure.
 
+### `docs/architecture/island_compressed_air_utility.md`
+
+Place-agnostic architecture for treating compressed air as a community utility in island and remote settings, including production, storage, transmission, district regulation, direct pneumatic loads, resilience service, and local energy-conversion nodes.
+
+### `docs/architecture/storm_resilience.md`
+
+Generalized storm-resilience architecture derived from the Tokyo HBA-01 concept, including hydraulic air compression, pneumatic floodwater management, sacrificial debris interception, fail-soft design, and long-horizon reduction of flood consequence.
+
 ### `docs/images/`
 
 Concept sketches and development diagrams.
