@@ -209,7 +209,7 @@ Place-agnostic architecture for treating compressed air as a community utility i
 
 ### `docs/architecture/storm_resilience.md`
 
-Generalized storm-resilience architecture derived from the Tokyo HBA-01 concept, including hydraulic air compression, pneumatic floodwater management, sacrificial debris interception, fail-soft design, and long-horizon reduction of flood consequence.
+Generalized storm-resilience architecture derived from prior HBA-01 conceptual screening work, including hydraulic air compression, pneumatic floodwater management, sacrificial debris interception, fail-soft design, and long-horizon reduction of flood consequence.
 
 ### `docs/images/`
 
