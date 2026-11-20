@@ -134,6 +134,120 @@ Potential protective features may include:
 
 The architecture should fail gracefully when debris or sediment exceeds the capacity of individual components.
 
+## Sacrificial Debris and Energy-Dissipation Forebay
+
+Before stormwater reaches a hydraulic air compressor, a large upstream forebay may be used as a **sacrificial conditioning zone**.
+
+Its purpose is not fine treatment.
+
+Its purpose is to intercept the destructive portion of the storm load before that load reaches sensitive downstream infrastructure.
+
+Potential functions include:
+
+- capture of boulders, logs, vehicles, trash, and other large debris;
+- spreading concentrated flood flow across a wider cross section;
+- deliberate momentum reduction;
+- turbulence and controlled energy dissipation;
+- upward deflection of portions of the flow;
+- temporary dispersion of water into spray, droplets, and aerated flow;
+- sediment deposition in zones designed for later removal;
+- protection of downstream hydraulic-air-compression intakes.
+
+Airborne spray or aerosol does not eliminate stormwater volume. Water lofted into the air will generally return to the drainage system or surrounding surface. However, temporary airborne dispersion, droplet breakup, air drag, turbulence, and repeated impact can increase residence time and dissipate part of the incoming kinetic energy. In a resilience system, even short delays or reductions in concentrated momentum may have value if they increase warning, evacuation, or downstream response time.
+
+### Directionally Biased Flow Geometry
+
+The forebay may include massive fins, baffles, ramps, deflectors, or channel geometry arranged to resist destructive inflow while still allowing controlled downstream passage.
+
+One conceptual inspiration is fluidic rectification or Tesla-valve-like geometry at infrastructure scale.
+
+This is an analogy, not a claim that a full-scale debris-laden flood will reproduce laboratory Tesla-valve behavior.
+
+The engineering objective is to investigate whether geometry can create preferential resistance, repeated turning, recirculation, upward deflection, and path-length increase for incoming floodwater without producing unacceptable upstream stage or redirecting hazard toward people or critical assets.
+
+The top surfaces of selected baffles may be shaped as upward ramps so that portions of high-velocity flow are deliberately projected upward into a controlled sacrificial volume.
+
+In plain terms, the system may intentionally make part of the floodwater spend time moving **up, apart, and through air** instead of continuing horizontally as one dense destructive mass.
+
+Any such geometry must be evaluated for:
+
+- secondary scour;
+- rebound and redirected jets;
+- splash and spray zones;
+- erosion;
+- structural impact;
+- debris accumulation;
+- upstream backwater;
+- bypass behavior;
+- public access and exclusion;
+- downstream hydraulic effects.
+
+Energy dissipation is useful only when the resulting forces and flow paths are directed into locations designed to receive them.
+
+### Debris Capture as a Deliberate Sacrifice
+
+Large debris racks or impact structures may intentionally retain material that would otherwise continue downstream.
+
+Clogging is therefore not automatically a failure.
+
+If a structure safely captures a boulder, tree, vehicle, or debris mass that would otherwise strike people, buildings, bridges, tunnels, or flood-control machinery, the retained debris may represent successful hazard interception.
+
+The design problem becomes managing the hydraulic consequences of that interception.
+
+The forebay should therefore provide:
+
+- large debris-storage volume;
+- redundant flow paths;
+- overflow or bypass capacity;
+- access for inspection;
+- stable working surfaces;
+- sediment and debris staging areas;
+- means to isolate damaged sections;
+- clear post-event cleanup routes.
+
+### Post-Storm Heavy-Equipment Access
+
+Maintainability should be designed into the forebay from the beginning.
+
+The facility should be laid out so that post-event cleanup can be performed by heavy earthmoving equipment rather than by improvised manual access.
+
+Depending on site scale, access may be designed for equipment in the range of:
+
+- D9-class crawler dozers;
+- large off-road articulated haul trucks;
+- 550-class hydraulic excavators;
+- loaders, cranes, and support equipment appropriate to the debris load.
+
+This may require:
+
+- all-weather access roads;
+- generous turning radii;
+- equipment ramps;
+- stabilized working pads;
+- redundant ingress and egress;
+- bridge and culvert capacities appropriate to cleanup equipment;
+- protected fuel and staging areas;
+- safe access after partial system damage;
+- debris stockpile and haul-out zones.
+
+The forebay should be treated as an infrastructure asset that is expected to become dirty, damaged, and obstructed during successful operation.
+
+Its post-event recovery plan is therefore part of the design, not an afterthought.
+
+### Life-Safety Function
+
+The forebay does not need to eliminate a flood to be valuable.
+
+If it reduces concentrated debris momentum, slows the arrival of the destructive front, or creates additional warning and evacuation time, that may be a meaningful resilience benefit even if downstream property damage still occurs.
+
+For extreme events, the design priority may explicitly be:
+
+**protect life first, preserve critical evacuation and response time second, protect property where practicable third.**
+
+This sacrificial forebay is upstream of the hydraulic air compressor.
+
+Its role is to make the water delivered to the compressor intake more manageable by removing large debris and reducing destructive flow concentration before energy recovery begins.
+
 ## Hydraulic Conditions Required
 
 The concept depends on recoverable hydraulic head.
