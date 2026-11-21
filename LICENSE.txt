@@ -30,11 +30,37 @@ and other obligations still apply.
 The official license texts control. This notice does not create additional
 license conditions or replace the terms of either license.
 
+ENGINEERING STATUS: NOT FOR CONSTRUCTION
+
+These materials are conceptual and preliminary. They are NOT FOR CONSTRUCTION
+and do not constitute final engineering calculations, final design drawings,
+construction documents, certified designs, or approval for implementation.
+
+Any person or organization adopting, adapting, developing, constructing, or
+implementing these concepts is responsible for independently completing and
+verifying the engineering, including final calculations, drawings, specifications,
+site-specific analysis, testing, safety and environmental evaluation, and
+applicable permitting and approvals. Qualified licensed professionals must be
+engaged where required by law. The original publication does not substitute for
+those responsibilities.
+
 DISCLAIMER OF WARRANTY AND LIABILITY
 
 This work is provided "as is," without warranty of any kind, to the extent
 permitted by applicable law. Use and implementation are at the user's risk.
 See the applicable licenses for their full warranty and liability provisions.
+
+INVITATION TO SHARE IMPROVEMENTS
+
+If you develop, test, validate, or improve a design inspired by this project,
+the originator would appreciate your voluntarily sharing findings, calculations,
+drawings, test results, or improvements with the community through the
+Living Water System GitHub repository:
+https://github.com/Sovereign-One/Living-Water-System
+
+You may open an Issue to discuss results or propose a change through a fork and
+pull request. Sharing improvements back is appreciated, not a condition of use
+or a requirement imposed beyond the applicable licenses.
 
 INDEPENDENCE STATEMENT
 
@@ -44,7 +70,7 @@ no involvement, endorsement, or responsibility for this work.
 
 ORIGINATOR AND PROVENANCE
 
-Original creator (originator): Malak Bahrami, PE
+Original creator (originator): Malak Bahrami
 Original project: The Living Water System
 Original source: https://github.com/Sovereign-One/Living-Water-System
 
