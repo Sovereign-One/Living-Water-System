@@ -42,8 +42,19 @@ This project was conceived and prepared by the author independently and outside
 any employment duties or contracts. The author's employer and affiliates have
 no involvement, endorsement, or responsibility for this work.
 
-CREATOR'S MARK (SHA-256)
+ORIGINATOR AND PROVENANCE
+
+Original creator (originator): Malak Bahrami, PE
+Original project: The Living Water System
+Original source: https://github.com/Sovereign-One/Living-Water-System
+
+Creator's Mark (SHA-256):
 
 f3004c6a645db1e05d9f2366e0565fa1e869be556eb3b5e407496799fdca18e5
+
+The name and source above identify the original creator for attribution under the
+applicable licenses. The Creator's Mark is retained as part of the historical
+provenance record; no claim is made that it hashes a particular current file
+or repository state. This notice adds no requirements beyond those licenses.
 
 End of LICENSE.txt
