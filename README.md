@@ -244,6 +244,8 @@ These questions are intended to become a structured engineering backlog using re
 
 Contributions that identify failure mechanisms, overlooked losses, environmental impacts, better materials, improved configurations, test methods, or alternative interpretations are valuable to the project.
 
+If you develop, test, or improve these concepts, the originator would appreciate your sharing calculations, drawings, test results, or design improvements with the community through [GitHub Issues](https://github.com/Sovereign-One/Living-Water-System/issues) or a fork and pull request. Sharing back is voluntary, not an additional license condition.
+
 ## Intent
 
 This work is offered as an **idea gift** and an open platform for exploration.
@@ -256,9 +258,9 @@ The goal is to make the concepts sufficiently clear and accessible that others c
 
 These materials are shared for research, discussion, education, and inspiration.
 
-They are not construction documents, certified engineering specifications, or approval for real-world implementation.
+**NOT FOR CONSTRUCTION.** These are conceptual, preliminary materials, not final engineering calculations, final drawings, certified engineering specifications, construction documents, or approval for real-world implementation.
 
-Real-world application requires appropriate engineering analysis, environmental evaluation, permitting, safety review, testing, and qualified professional involvement.
+Anyone adopting, adapting, or implementing these concepts is responsible for independently completing and verifying the final design, including calculations, drawings, specifications, site-specific analysis, testing, safety and environmental evaluation, and required permitting and approvals. Qualified licensed professionals must be engaged where required by law.
 
 ## Licensing and Provenance
 
