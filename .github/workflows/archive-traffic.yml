@@ -1,0 +1,47 @@
+name: Archive repository traffic privately
+
+on:
+  schedule:
+    # Daily, 06:23 UTC; GitHub may delay scheduled runs.
+    - cron: '23 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: archive-living-water-traffic
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check whether private archiving is configured
+        id: config
+        env:
+          TRAFFIC_READ_TOKEN: ${{ secrets.TRAFFIC_READ_TOKEN }}
+          ARCHIVE_WRITE_TOKEN: ${{ secrets.ARCHIVE_WRITE_TOKEN }}
+        shell: bash
+        run: |
+          if [[ -n "$TRAFFIC_READ_TOKEN" && -n "$ARCHIVE_WRITE_TOKEN" ]]; then
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+            echo 'Not configured yet: add both repository Actions secrets to activate private archiving.'
+          fi
+
+      - name: Get collector source
+        if: steps.config.outputs.ready == 'true'
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Store completed daily counts in private repository
+        if: steps.config.outputs.ready == 'true'
+        env:
+          SOURCE_REPO: Sovereign-One/Living-Water-System
+          ARCHIVE_REPO: Sovereign-One/living-water-traffic-private
+          TRAFFIC_READ_TOKEN: ${{ secrets.TRAFFIC_READ_TOKEN }}
+          ARCHIVE_WRITE_TOKEN: ${{ secrets.ARCHIVE_WRITE_TOKEN }}
+        run: python3 tools/traffic_archive/collector.py
